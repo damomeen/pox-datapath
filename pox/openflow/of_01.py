@@ -68,30 +68,32 @@ import traceback
 
 def handle_HELLO (con, msg): #S
   #con.msg("HELLO wire protocol " + hex(msg.version))
-  log.debug("Hello received")
+  log.debug("-> Hello received")
   # Send a features request
   msg = of.ofp_features_request()
+  log.debug("<- Feature request sent")
   con.send(msg)
 
 def handle_ECHO_REPLY (con, msg):
-  log.debug("Echo replay received")
+  log.debug("-> Echo replay received")
   #con.msg("Got echo reply")
   pass
 
 def handle_ECHO_REQUEST (con, msg): #S
   reply = msg
-  log.debug("Echo request received")
+  log.debug("-> Echo request received")
   reply.header_type = of.OFPT_ECHO_REPLY
   con.send(reply)
+  log.debug("<- Echo replay sent")
 
 def handle_FLOW_REMOVED (con, msg): #A
-  log.debug("Flow removed received")  
+  log.debug("-> Flow removed received")  
   e = con.ofnexus.raiseEventNoErrors(FlowRemoved, con, msg)
   if e is None or e.halt != True:
     con.raiseEventNoErrors(FlowRemoved, con, msg)
 
 def handle_FEATURES_REPLY (con, msg):
-  log.debug("Features reply received")
+  log.debug("-> Features reply received")
   connecting = con.connect_time == None
   con.features = msg
   con.original_ports._ports = set(msg.ports)
@@ -151,10 +153,13 @@ def handle_FEATURES_REPLY (con, msg):
   if con.ofnexus.miss_send_len is not None:
     con.send(of.ofp_set_config(miss_send_len =
                                   con.ofnexus.miss_send_len))
+    log.debug("<- Set config sent")
   if con.ofnexus.clear_flows_on_connect:
     con.send(of.ofp_flow_mod(match=of.ofp_match(),command=of.OFPFC_DELETE))
+    log.debug("<- Flow mod DELETE sent")
 
   con.send(barrier)
+  log.debug("<- Barrier sent")
 
   """
   # Hack for old versions of cbench
@@ -169,6 +174,7 @@ def handle_STATS_REPLY (con, msg):
   if e is None or e.halt != True:
     con.raiseEventNoErrors(RawStatsReply, con, msg)
   con._incoming_stats_reply(msg)
+  log.debug("<- Stats reply sent")
 
 def handle_PORT_STATUS (con, msg): #A
   log.debug("Port status received")  
