@@ -1,7 +1,10 @@
+import pox.core
+pox.core.initialize()
 from pox.datapaths.switch import SoftwareSwitch
 from pox.datapaths.switch import ofp_hello
 from pox.openflow.util import make_type_to_unpacker_table
-import pox.core
+
+from pox.core import core
 
 import logging
 import socket
@@ -72,6 +75,7 @@ class Connection():
         
 #========================================================================================================
 if __name__ == "__main__":
+
     switch = SoftwareSwitch(dpid=1, name="sw1")
     conn = Connection()
     switch.set_connection(conn)

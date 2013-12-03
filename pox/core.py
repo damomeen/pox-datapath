@@ -539,4 +539,5 @@ core = None
 def initialize ():
   global core
   core = POXCore()
+  print(core)
   return core
