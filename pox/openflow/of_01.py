@@ -68,18 +68,19 @@ import traceback
 
 def handle_HELLO (con, msg): #S
   #con.msg("HELLO wire protocol " + hex(msg.version))
-
+  log.debug("Hello received")
   # Send a features request
   msg = of.ofp_features_request()
   con.send(msg)
 
 def handle_ECHO_REPLY (con, msg):
+  log.debug("Echo replay received")
   #con.msg("Got echo reply")
   pass
 
 def handle_ECHO_REQUEST (con, msg): #S
   reply = msg
-  
+  log.debug("Echo request received")
   reply.header_type = of.OFPT_ECHO_REPLY
   con.send(reply)
 
