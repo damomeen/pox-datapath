@@ -1,1 +1,8 @@
+Very simple OF-endpoind implemenentation (it is not processsing network frames) basing on POX for OF experiments purposes.
 
+Usage:
+
+./configure.sh
+python datapath.py
+
+Some debug modification of POX also included.
