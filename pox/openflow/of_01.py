@@ -85,11 +85,13 @@ def handle_ECHO_REQUEST (con, msg): #S
   con.send(reply)
 
 def handle_FLOW_REMOVED (con, msg): #A
+  log.debug("Flow removed received")  
   e = con.ofnexus.raiseEventNoErrors(FlowRemoved, con, msg)
   if e is None or e.halt != True:
     con.raiseEventNoErrors(FlowRemoved, con, msg)
 
 def handle_FEATURES_REPLY (con, msg):
+  log.debug("Features reply received")
   connecting = con.connect_time == None
   con.features = msg
   con.original_ports._ports = set(msg.ports)
@@ -162,12 +164,14 @@ def handle_FEATURES_REPLY (con, msg):
   """
 
 def handle_STATS_REPLY (con, msg):
+  log.debug("Stats reply received")  
   e = con.ofnexus.raiseEventNoErrors(RawStatsReply, con, msg)
   if e is None or e.halt != True:
     con.raiseEventNoErrors(RawStatsReply, con, msg)
   con._incoming_stats_reply(msg)
 
 def handle_PORT_STATUS (con, msg): #A
+  log.debug("Port status received")  
   if msg.reason == of.OFPPR_DELETE:
     con.ports._forget(msg.desc)
   else:
@@ -177,11 +181,13 @@ def handle_PORT_STATUS (con, msg): #A
     con.raiseEventNoErrors(PortStatus, con, msg)
 
 def handle_PACKET_IN (con, msg): #A
+  log.debug("Packet in received")  
   e = con.ofnexus.raiseEventNoErrors(PacketIn, con, msg)
   if e is None or e.halt != True:
     con.raiseEventNoErrors(PacketIn, con, msg)
 
 def handle_ERROR_MSG (con, msg): #A
+  log.debug("Error msg received")  
   err = ErrorIn(con, msg)
   e = con.ofnexus.raiseEventNoErrors(err)
   if e is None or e.halt != True:
@@ -191,18 +197,21 @@ def handle_ERROR_MSG (con, msg): #A
               msg.show(str(con) + " Error: ").strip())
 
 def handle_BARRIER (con, msg):
+  log.debug("Barrier received")  
   e = con.ofnexus.raiseEventNoErrors(BarrierIn, con, msg)
   if e is None or e.halt != True:
     con.raiseEventNoErrors(BarrierIn, con, msg)
 
 # handlers for stats replies
 def handle_OFPST_DESC (con, parts):
+  log.debug("OFPST_DESC received")  
   msg = parts[0].body
   e = con.ofnexus.raiseEventNoErrors(SwitchDescReceived,con,parts[0],msg)
   if e is None or e.halt != True:
     con.raiseEventNoErrors(SwitchDescReceived, con, parts[0], msg)
 
 def handle_OFPST_FLOW (con, parts):
+  log.debug("OFPST_FLOW received")   
   msg = []
   for part in parts:
     msg.extend(part.body)
